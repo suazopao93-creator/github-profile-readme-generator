@@ -1,0 +1,101 @@
+
+Código
+package gestiondepilas;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+import java.util.Stack;
+
+
+public class GestionDePilas {
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        Stack<String> rampa = new Stack<>();
+        Stack<String> maniobra = new Stack<>();
+        List<String> registro = new ArrayList<>();
+
+        int opcion;
+        do {
+            System.out.println("\n=== SIMULADOR DE MUELLE (Rampa LIFO) ===");
+            System.out.println("1. Ingresar camión");
+            System.out.println("2. Avanzar servicio (atender cima)");
+            System.out.println("3. Retirar camión por ID");
+            System.out.println("4. Mostrar estado de pilas");
+            System.out.println("5. Mostrar registro de operaciones");
+            System.out.println("6. Salir");
+            System.out.print("Elija una opción: ");
+            opcion = sc.nextInt();
+            sc.nextLine(); // limpiar buffer
+
+            switch (opcion) {
+                case 1: // INGRESAR
+                    System.out.print("Ingrese ID del camión: ");
+                    String idCamion = sc.nextLine();
+                    rampa.push(idCamion);
+                    registro.add("Ingresó camión: " + idCamion);
+                    System.out.println("✅ Camión " + idCamion + " ingresó a la rampa.");
+                    break;
+
+                case 2: // AVANZAR SERVICIO
+                    if (!rampa.isEmpty()) {
+                        String camionAtendido = rampa.pop();
+                        registro.add("Camión atendido (carga/descarga): " + camionAtendido);
+                        System.out.println("✅ Camión " + camionAtendido + " fue atendido y retirado de la rampa.");
+                    } else {
+                        System.out.println("⚠️ No hay camiones en la rampa.");
+                    }
+                    break;
+
+                case 3: // RETIRAR POR ID
+                    System.out.print("Ingrese ID del camión a retirar: ");
+                    String idRetiro = sc.nextLine();
+                    boolean encontrado = false;
+
+                    while (!rampa.isEmpty()) {
+                        String cima = rampa.peek();
+                        if (cima.equals(idRetiro)) {
+                            rampa.pop();
+                            registro.add("Camión retirado: " + idRetiro);
+                            System.out.println("✅ Camión " + idRetiro + " retirado de la rampa.");
+                            encontrado = true;
+                            break;
+                        } else {
+                            maniobra.push(rampa.pop());
+                        }
+                    }
+
+                    // devolver los camiones de maniobra a rampa
+                    while (!maniobra.isEmpty()) {
+                        rampa.push(maniobra.pop());
+                    }
+
+                    if (!encontrado) {
+                        System.out.println("⚠️ El camión con ID " + idRetiro + " no se encontró en la rampa.");
+                    }
+                    break;
+
+                case 4: // MOSTRAR PILAS
+                    System.out.println("📌 Rampa: " + rampa);
+                    System.out.println("📌 Maniobra: " + maniobra);
+                    break;
+
+                case 5: // MOSTRAR REGISTRO
+                    System.out.println("📖 Registro de operaciones:");
+                    for (String log : registro) {
+                        System.out.println(" - " + log);
+                    }
+                    break;
+
+                case 6:
+                    System.out.println("👋 Saliendo del simulador...");
+                    break;
+
+                default:
+                    System.out.println("❌ Opción inválida.");
+            }
+        } while (opcion != 6);
+    }
+    
+}
